@@ -15,6 +15,11 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -22,7 +27,6 @@ import javax.swing.JOptionPane;
 
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -31,20 +35,30 @@ public class Tablero extends javax.swing.JFrame {
 
     private JPanel panel;
     private JButton listaBotones[][] = new JButton[8][8];
-    private Image[][] chessPieceImages = new Image[2][6];
+    private Image[][] imagenPiezas = new Image[2][6];
     private static final String COLS = "ABCDEFGH";
+    public static final int QUEEN = 0, KING = 1,
+            ROOK = 2, KNIGHT = 3, BISHOP = 4, PAWN = 5;
+    public static final int[] STARTING_ROW = {
+        ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK
+    };
+    public static final int BLACK = 0, WHITE = 1;
 
-    public Tablero() {
+    public Tablero() throws IOException {
         initComponents();
-       
+       crearImagenes();
     }
 
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-             //   SwingUtilities.invokeLater(this);
-                new Tablero().setVisible(true);
+                try {
+                    //   SwingUtilities.invokeLater(this);
+                    new Tablero().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Tablero.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
             }
         });
@@ -62,8 +76,37 @@ public class Tablero extends javax.swing.JFrame {
             }
         }
     }
+    
+    private void crearImagenes() throws IOException {
+        BufferedImage imagen;
+        imagen = ImageIO.read(new File("C:\\Users\\Martin\\Documents\\NetBeansProjects\\mavenproject1\\MiAjedrez\\src\\resources\\piezas.png"));
+        for (int ii = 0; ii < 2; ii++) {
+                for (int jj = 0; jj < 6; jj++) {
+                    imagenPiezas[ii][jj] = imagen.getSubimage(
+                            jj * 64, ii * 64, 64, 64);
+              
+                }
+            }
+         for (int ii = 0; ii < STARTING_ROW.length; ii++) {
+            listaBotones[ii][0].setIcon(new ImageIcon(
+                    imagenPiezas[BLACK][STARTING_ROW[ii]]));
+        }
+        for (int ii = 0; ii < STARTING_ROW.length; ii++) {
+            listaBotones[ii][1].setIcon(new ImageIcon(
+                    imagenPiezas[BLACK][PAWN]));
+        }
+        // set up the white pieces
+        for (int ii = 0; ii < STARTING_ROW.length; ii++) {
+            listaBotones[ii][6].setIcon(new ImageIcon(
+                    imagenPiezas[WHITE][PAWN]));
+        }
+        for (int ii = 0; ii < STARTING_ROW.length; ii++) {
+            listaBotones[ii][7].setIcon(new ImageIcon(
+                    imagenPiezas[WHITE][STARTING_ROW[ii]]));
+        }
+    }
 
-    public void initComponents() {
+    public void initComponents() throws IOException {
 
         panel = new JPanel((new GridLayout(0, 9))) {
             @Override
@@ -95,6 +138,7 @@ public class Tablero extends javax.swing.JFrame {
         boardConstrain.setBackground(ochre);
         boardConstrain.add(panel);
         Insets buttonMargin = new Insets(0, 0, 0, 0);
+        
 
         panel.setBorder(new CompoundBorder(
                 new EmptyBorder(8, 8, 8, 8),
@@ -164,7 +208,7 @@ public class Tablero extends javax.swing.JFrame {
         this.setLocationRelativeTo(null); // Centramos la ventana en el escritorio
         this.setMinimumSize(this.getSize());
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        
+        this.pack();
         }
     }
 }
