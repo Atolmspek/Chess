@@ -33,6 +33,7 @@ import javax.swing.border.LineBorder;
 
 public class Tablero extends javax.swing.JFrame {
 
+    private PiezaAjedrez listaPiezas[][] = new PiezaAjedrez [2][6];
     private JPanel panel;
     private JButton listaBotones[][] = new JButton[8][8];
     private Image[][] imagenPiezas = new Image[2][6];
@@ -47,6 +48,11 @@ public class Tablero extends javax.swing.JFrame {
     public Tablero() throws IOException {
         initComponents();
        crearImagenes();
+        for (int i = 0; i < listaPiezas.length; i++) {
+            for (int j = 0; j < listaPiezas[i].length; j++) {
+                listaPiezas[i][j]=(new Pawn("Pawn", "Blancas",i, j));
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -69,8 +75,15 @@ public class Tablero extends javax.swing.JFrame {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (listaBotones[i][j] == evt.getSource()) {
+                    ImageIcon imagen = (ImageIcon) listaBotones[i][j].getIcon();
+                    listaBotones[i][j + 1].setBackground(Color.red);
+                    listaBotones[i][j + 2].setBackground(Color.red);
+// Establecer la imagen del botón en la posición (x1, y1) en null
+                    listaBotones[i][j].setIcon(null);
 
-                    JOptionPane.showMessageDialog(this, "Fila " + (i + 1) + " Columna " + COLS.charAt(j));
+// Establecer la imagen obtenida en el botón en la posición (x2, y2)
+                    listaBotones[6][5].setIcon(imagen);
+                    //   JOptionPane.showMessageDialog(this, "Fila " + (i + 1) + " Columna " + COLS.charAt(j));
                     break;
                 }
             }
@@ -79,7 +92,7 @@ public class Tablero extends javax.swing.JFrame {
     
     private void crearImagenes() throws IOException {
         BufferedImage imagen;
-        imagen = ImageIO.read(new File("C:\\Users\\Martin\\Documents\\NetBeansProjects\\mavenproject1\\MiAjedrez\\src\\resources\\piezas.png"));
+        imagen = ImageIO.read(new File("D:\\MiAjedrez\\src\\resources\\img.png"));
         for (int ii = 0; ii < 2; ii++) {
                 for (int jj = 0; jj < 6; jj++) {
                     imagenPiezas[ii][jj] = imagen.getSubimage(
